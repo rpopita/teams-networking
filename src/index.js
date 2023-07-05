@@ -1,7 +1,5 @@
 import "./style.css";
 
-console.warn("start app");
-
 function getTeamAsHTML(team) {
   return ` <tr>
     <td>${team.promotion}</td>
@@ -13,13 +11,13 @@ function getTeamAsHTML(team) {
 }
 
 function renderTeams(teams) {
-  const htmlTeams = teams.map(getTeamsAsHTML);
+  const htmlTeams = teams.map(getTeamAsHTML);
   console.warn(htmlTeams);
   document.querySelectorAll("#teamsTable tbody").innerHTML = htmlTeams.join("");
 }
 
 function loadTeams() {
-  fetch("teams.json")
+  fetch("http://localhost:3000/teams-json")
     .then(r => r.json())
     .then(renderTeams);
 }
