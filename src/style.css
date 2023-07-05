@@ -17,6 +17,9 @@ h1 {
 
 header {
   background-image: url(images/th.png);
+  flex-direction: row;
+  align-items: center;
+  display: flex;
   text-shadow: 1px 1px 2px #0000;
 }
 
