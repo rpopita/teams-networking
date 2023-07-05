@@ -13,7 +13,7 @@ function getTeamAsHTML(team) {
 function renderTeams(teams) {
   const htmlTeams = teams.map(getTeamAsHTML);
   console.warn(htmlTeams);
-  document.querySelectorAll("#teamsTable tbody").innerHTML = htmlTeams.join("");
+  document.querySelector("#teamsTable tbody").innerHTML = htmlTeams.join("");
 }
 
 function loadTeams() {
