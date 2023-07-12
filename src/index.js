@@ -5,7 +5,7 @@ function $(selector) {
 }
 
 function createTeamRequest(team) {
-  fetch("http://localhost:8080/teams-json/create", {
+  fetch("http://localhost:3000/teams-json/create", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -15,7 +15,7 @@ function createTeamRequest(team) {
 }
 
 function deleteTeamRequest(id) {
-  return fetch("http://localhost:8080/teams-json/delete", {
+  return fetch("http://localhost:3000/teams-json/delete", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json"
@@ -38,13 +38,23 @@ function getTeamAsHTML(team) {
 }
 
 function renderTeams(teams) {
-  const htmlTeams = teams.map(getTeamAsHTML);
+  const htmlTeams = teams.map(team => {
+    return team.id === editId ? getTeamAsHTMLInputs(team) : getTeamAsHTML(team);
+  });
   // console.warn(htmlTeams);
-  document.querySelector("#teamsTable tbody").innerHTML = htmlTeams.join("");
+  $("#teamsTable tbody").innerHTML = htmlTeams.join("");
+  addTitlesToOverflowCells();
+}
+
+function addTitlesToOverflowCells() {
+  const cells = document.querySelectorAll("#teamsTable td");
+  cells.forEach(cell => {
+    cell.title = cell.offsetWidth < cell.scrollWidth ? cell.textContent : "";
+  });
 }
 
 function loadTeams() {
-  fetch("http://localhost:8080/teams-json")
+  fetch("http://localhost:3000/teams-json")
     .then(r => r.json())
     .then(renderTeams);
 }
