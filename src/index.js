@@ -31,8 +31,8 @@ function getTeamAsHTML(team) {
     <td>${team.name}</td>
     <td>${team.url}</td>
     <td>
-      <a data-id="${team.id}" class="delete-btn">X</a>
-      <a data-id="${team.id}" class="edit-btn">&#9998;</a>
+      <button data-id="${team.id}" class="delete-btn">X</button>
+      <button data-id="${team.id}" class="edit-btn">&#9998;</button>
     </td>
    </tr>`;
 }
@@ -83,6 +83,9 @@ function initEvents() {
           window.location.reload();
         }
       });
+    } else if (e.target.matches("a.edit-btn")) {
+      const id = e.target.dataset.id;
+      startEdit(id);
     }
   });
 }

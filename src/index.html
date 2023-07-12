@@ -17,15 +17,22 @@
     </header>
 
     <section>
-      <form id="teamsForm" action="" method="get">
-        <div class="tbar">
-          <button>❌ Remove selected</button>
-          <div class="tfill"></div>
-          <input placeholder="Search" type="search" name="search" id="search" />
-          <label for="search"> 🔎</label>
-        </div>
+      <div class="tbar">
+        <button>❌ Remove selected</button>
+        <div class="tfill"></div>
+        <input placeholder="Search" type="search" name="search" id="search" />
+        <label for="search"> 🔎</label>
+      </div>
 
+      <form id="teamsForm" action="" method="get">
         <table id="teamsTable">
+          <colgroup>
+            <col style="width: 20%" />
+            <col style="width: 40%" />
+            <col style="width: 25%" />
+            <col style="width: 15%" />
+            <col class="table-actions" />
+          </colgroup>
           <thead>
             <tr>
               <th>Promotion</th>
@@ -51,8 +58,8 @@
                 <input type="text" name="url" id="url" placeholder="Enter URL" required />
               </td>
               <td>
-                <button type="submit">💾</button>
-                <button type="reset">❌</button>
+                <button type="submit" class="action-btn">💾</button>
+                <button type="reset" class="action-btn">❌</button>
               </td>
             </tr>
           </tfoot>
