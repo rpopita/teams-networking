@@ -80,13 +80,36 @@ function onSubmit(e) {
   });
 }
 
+function startEdit(id) {
+  editId = id;
+  // const team = allTeams.find(team => team.id === id);
+  renderTeams(allTeams, id);
+
+  setInputsDisabled(true);
+}
+
+function setInputsDisabled(disabled) {
+  document.querySelectorAll("tfoot input").forEach(input => {
+    input.disabled = disabled;
+  });
+}
+
 function initEvents() {
   $("#teamsForm").addEventListener("submit", onSubmit);
+  $("#teamsForm").addEventListener("reset", e => {
+    console.info("reset", editId);
+    if (editId) {
+      console.warn("cancel");
+      renderTeams(allTeams);
+      setInputsDisabled(false);
+      editId = "";
+    }
+  });
 
   $("#teamsTable tbody").addEventListener("click", e => {
-    if (e.target.matches("a.delete-btn")) {
-      // const id = e.target.dataset.id;
-      console.warn("delete... %o", id);
+    if (e.target.matches("button.delete-btn")) {
+      const id = e.target.dataset.id;
+      // console.warn("delete... %o", id);
       deleteTeamRequest(id).then(status => {
         // console.info("delete status %o", status);
         if (status.success) {
