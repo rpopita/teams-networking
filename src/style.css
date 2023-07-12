@@ -132,11 +132,9 @@ footer {
 }
 
 .delete-btn:hover {
-  text-decoration: underline;
   color: darkred;
 }
 
 .edit-btn:hover {
-  text-decoration: underline;
   color: greenyellow;
 }
