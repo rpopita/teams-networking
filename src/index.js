@@ -98,9 +98,10 @@ function setInputsDisabled(disabled) {
 }
 
 function filterElements(teams, search) {
+  search = search.toLowerCase();
   return teams.filter(team => {
     // console.info("search %o in %o", search, team.promotion);
-    return team.promotion.includes(search);
+    return team.promotion.toLowerCase().includes(search);
   });
 }
 
