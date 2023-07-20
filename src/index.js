@@ -47,7 +47,13 @@ function getTeamAsHTML(team) {
    </tr>`;
 }
 
-function renderTeams(teams) {
+let previewTeams = [];
+function renderTeams(teams, editId) {
+  if (!editId && teams === previewTeams) {
+    console.warn("same teams already rendered");
+    return;
+  }
+  previewTeams = teams;
   const htmlTeams = teams.map(team => {
     return team.id === editId ? getTeamAsHTMLInputs(team) : getTeamAsHTML(team);
   });
@@ -66,38 +72,74 @@ function addTitlesToOverflowCells() {
 function loadTeams() {
   fetch("http://localhost:3000/teams-json")
     .then(r => r.json())
-    .then(renderTeams);
+    .then(teams => {
+      allTeams = teams;
+      renderTeams(teams);
+    });
+}
+
+function getTeamValues(parent) {
+  const promotion = $(`${parent} input[name=promotion]`).value;
+  const members = $(`${parent} input[name=members]`).value;
+  const name = $(`${parent} input[name=name]`).value;
+  const url = $(`${parent} input[name=url]`).value;
 }
 
 function onSubmit(e) {
   e.preventDefault();
 
-  const members = $("#members").value;
-  const name = $("input[name=name]").value;
-  const url = $("input[name=url]").value;
-  const team = {
-    promotion: $("#promotion").value,
-    members: members,
-    name,
-    url
-  };
+  const team = getTeamValues(editId ? "tbody" : "tfoot");
 
-  createTeamRequest(team).then(status => {
-    console.warn("created", status);
-    if (status.success) {
-      team.id = status.id;
-      allTeams.push(team);
-      renderTeams(allTeams);
-      $("teamsForm").reset();
-    }
-  });
+  if (editId) {
+    team.id = editId;
+    console.warn("update", team);
+    updateTeamRequest(team).then(status => {
+      console.warn("updated", status);
+      if (status.success) {
+        // window.location.relaod();
+        loadTeams();
+        // $("#teamsForm").reset();
+        setInputsDisabled(false);
+        editId = "";
+      }
+    });
+  } else {
+    createTeamRequest(team).then(status => {
+      console.warn("created", status);
+      if (status.success) {
+        // window.location.reload();
+        // loadTeams();
+        team.id = status.id;
+        // allTeams.push(team);
+        allTeams = [...allTeams, team];
+        renderTeams(allTeams);
+        $("teamsForm").reset();
+      }
+    });
+  }
 }
+
+const members = $("#members").value;
+const name = $("input[name=name]").value;
+const url = $("input[name=url]").value;
+const team = {
+  promotion: $("#promotion").value,
+  members: members,
+  name,
+  url
+};
+return team;
 
 function startEdit(id) {
   editId = id;
-  // const team = allTeams.find(team => team.id === id);
-  renderTeams(allTeams, id);
 
+  // const team = allTeams.find(team => team.id === id);
+  // $("#promotion").value = team.promotion;
+  // $("#members").value = team.members;
+  // $("#name").value = team.name;
+  // $("#url").value = team.url;
+
+  renderTeams(allTeams, id);
   setInputsDisabled(true);
 }
 
@@ -132,7 +174,8 @@ function initEvents() {
   $("#teamsForm").addEventListener("reset", e => {
     console.info("reset", editId);
     if (editId) {
-      console.warn("cancel");
+      // console.warn("cancel edit");
+      allTeams = [...allTeams];
       renderTeams(allTeams);
       setInputsDisabled(false);
       editId = "";
