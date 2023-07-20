@@ -96,6 +96,11 @@ footer {
   background-color: #f2f2f2;
 }
 
+#teamsTable input:not([type="checkbox"]) {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 #teamsTable tfoot input {
   width: 100%;
 }
@@ -110,6 +115,7 @@ footer {
 }
 
 .action-btn {
+  cursor: pointer;
 }
 
 .table-actions {
