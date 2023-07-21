@@ -83,6 +83,8 @@ function getTeamValues(parent) {
   const members = $(`${parent} input[name=members]`).value;
   const name = $(`${parent} input[name=name]`).value;
   const url = $(`${parent} input[name=url]`).value;
+  const team = {};
+  return team;
 }
 
 function onSubmit(e) {
@@ -118,17 +120,6 @@ function onSubmit(e) {
     });
   }
 }
-
-const members = $("#members").value;
-const name = $("input[name=name]").value;
-const url = $("input[name=url]").value;
-const team = {
-  promotion: $("#promotion").value,
-  members: members,
-  name,
-  url
-};
-return team;
 
 function startEdit(id) {
   editId = id;
