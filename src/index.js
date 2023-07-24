@@ -131,6 +131,7 @@ function startEdit(id) {
   // $("#url").value = team.url;
 
   renderTeams(allTeams, id);
+
   setInputsDisabled(true);
 }
 
