@@ -14,7 +14,7 @@ function createTeamRequest(team) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(team)
-  });
+  }).then(r => r.json());
 }
 
 function deleteTeamRequest(id, callback) {
