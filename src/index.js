@@ -36,14 +36,12 @@ function deleteTeamRequest(id, callback) {
 
 function getTeamAsHTML(team) {
   const url = team.url;
-  const displayUrl = url.startsWith("https://github.com/") ? url.substring(19) : url;
+  // const displayUrl = url.startsWith("https://github.com/") ? url.substring(19) : url;
   return ` <tr>
     <td>${team.promotion}</td>
     <td>${team.members}</td>
     <td>${team.name}</td>
-    <td>
-    <a href="${url}" target="_blank">${displayUrl}</a>
-    </td>
+    <td>${team.url}</td>
     <td>
       <button type="button" data-id="${team.id}" class="action-btn delete-btn">X</button>
       <button type="button" data-id="${team.id}" class="action-btn edit-btn">&#9998;</button>
