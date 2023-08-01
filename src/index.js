@@ -35,14 +35,18 @@ function deleteTeamRequest(id, callback) {
 }
 
 function getTeamAsHTML(team) {
+  const url = team.url;
+  const displayUrl = url.startsWith("https://github.com/") ? url.substring(19) : url;
   return ` <tr>
     <td>${team.promotion}</td>
     <td>${team.members}</td>
     <td>${team.name}</td>
-    <td>${team.url}</td>
     <td>
-      <button data-id="${team.id}" class="action-btn delete-btn">X</button>
-      <button data-id="${team.id}" class="action-btn edit-btn">&#9998;</button>
+    <a href="${url}" target="_blank">${displayUrl}</a>
+    </td>
+    <td>
+      <button type="button" data-id="${team.id}" class="action-btn delete-btn">X</button>
+      <button type="button" data-id="${team.id}" class="action-btn edit-btn">&#9998;</button>
     </td>
    </tr>`;
 }
@@ -83,7 +87,12 @@ function getTeamValues(parent) {
   const members = $(`${parent} input[name=members]`).value;
   const name = $(`${parent} input[name=name]`).value;
   const url = $(`${parent} input[name=url]`).value;
-  const team = {};
+  const team = {
+    promotion: promotion,
+    members: members,
+    name,
+    url
+  };
   return team;
 }
 
@@ -185,7 +194,7 @@ function initEvents() {
           loadTeams();
         }
       });
-    } else if (e.target.matches("a.edit-btn")) {
+    } else if (e.target.matches("button.edit-btn")) {
       const id = e.target.dataset.id;
       startEdit(id);
     }
