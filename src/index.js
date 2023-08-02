@@ -8,7 +8,7 @@ function $(selector) {
 }
 
 function createTeamRequest(team) {
-  fetch("http://localhost:3000/teams-json/create", {
+  return fetch("http://localhost:3000/teams-json/create", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -39,18 +39,39 @@ function getTeamAsHTML(team) {
   // const url = team.url;
   const { id, url } = team;
   const displayUrl = url.startsWith("https://github.com/") ? url.substring(19) : url;
-  return ` <tr>
+  return `<tr>
     <td>${team.promotion}</td>
     <td>${team.members}</td>
     <td>${team.name}</td>
     <td>
-      <a href="${url}" targets="_blank">${displayUrl}</a><
-    /td>
-    <td>
-      <button type="button" data-id="${team.id}" class="action-btn delete-btn">X</button>
-      <button type="button" data-id="${team.id}" class="action-btn edit-btn">&#9998;</button>
+      <a href="${url}" target="_blank">${displayUrl}</a>
     </td>
-   </tr>`;
+    <td>
+      <button type="button" data-id="${id}" class="action-btn edit-btn">&#9998;</button>
+      <button type="button" data-id="${id}" class="action-btn delete-btn">♻</button>
+    </td>
+  </tr>`;
+}
+
+function getTeamAsHTMLInputs(team) {
+  return `<tr>
+    <td>
+      <input value="${team.promotion}" type="text" name="promotion" placeholder="Enter Promotion" required/>
+    </td>
+    <td>
+      <input value="${team.members}" type="text" name="members" placeholder="Enter Members" required />
+    </td>
+    <td>
+      <input value="${team.name}" type="text" name="name" placeholder="Enter Name" required />
+    </td>
+    <td>
+      <input value="${team.url}" type="text" name="url" placeholder="Enter URL" required />
+    </td>
+    <td>
+      <button type="submit" class="action-btn" title="Save">💾</button>
+      <button type="reset" class="action-btn" title="Cancel">✖</button>
+    </td>
+  </tr>`;
 }
 
 let previewTeams = [];
@@ -84,6 +105,16 @@ function addTitlesToOverflowCells() {
   });
 }
 
+function updateTeamRequest(team) {
+  return fetch("http://localhost:3000/teams-json/update", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(team)
+  }).then(r => r.json());
+}
+
 function loadTeams() {
   fetch("http://localhost:3000/teams-json")
     .then(r => r.json())
@@ -99,8 +130,8 @@ function getTeamValues(parent) {
   const name = $(`${parent} input[name=name]`).value;
   const url = $(`${parent} input[name=url]`).value;
   const team = {
-    promotion: promotion,
-    members: members,
+    promotion,
+    members,
     name,
     url
   };
@@ -116,13 +147,13 @@ function onSubmit(e) {
 
   if (editId) {
     team.id = editId;
-    console.warn("update", team);
+    console.warn("update...", team);
     updateTeamRequest(team).then(status => {
-      // console.warn("updated", status);
+      console.warn("updated", status);
       if (status.success) {
         allTeams = allTeams.map(t => {
           if (t.id === team.id) {
-            console.warn("updated %o -> %o", t, team);
+            //var a = { x: 1, y: 2 }; var b = { y: 3, z: 4 }; var c = { ...a, ...c };
             return {
               ...t,
               ...team
@@ -143,7 +174,7 @@ function onSubmit(e) {
         team.id = status.id;
         allTeams = [...allTeams, team];
         renderTeams(allTeams);
-        $("teamsForm").reset();
+        $("#teamsForm").reset();
       }
     });
   }
@@ -151,18 +182,12 @@ function onSubmit(e) {
 
 function startEdit(id) {
   editId = id;
-
-  // const team = allTeams.find(team => team.id === id);
-  // $("#promotion").value = team.promotion;
-  // $("#members").value = team.members;
-  // $("#name").value = team.name;
-  // $("#url").value = team.url;
-
+  console.warn("edit... %o", id, allTeams);
+  //const team = allTeams.find(team => team.id === id);
   renderTeams(allTeams, id);
 
   setInputsDisabled(true);
 }
-
 function setInputsDisabled(disabled) {
   document.querySelectorAll("tfoot input").forEach(input => {
     input.disabled = disabled;
@@ -171,13 +196,13 @@ function setInputsDisabled(disabled) {
 
 function filterElements(teams, search) {
   search = search.toLowerCase();
-  return teams.filter(team => {
+  return teams.filter(({ promotion, members, name, url }) => {
     console.info("search %o in %o", search, team.promotion);
     return (
-      team.promotion.toLowerCase().includes(search) ||
-      team.members.toLowerCase().includes(search) ||
-      team.name.toLowerCase().includes(search) ||
-      team.url.toLowerCase().includes(search)
+      promotion.toLowerCase().includes(search) ||
+      members.toLowerCase().includes(search) ||
+      name.toLowerCase().includes(search) ||
+      url.toLowerCase().includes(search)
     );
   });
 }
@@ -205,11 +230,11 @@ function initEvents() {
   $("#teamsTable tbody").addEventListener("click", e => {
     if (e.target.matches("button.delete-btn")) {
       const id = e.target.dataset.id;
-      // console.warn("delete... %o", id);
+      //console.warn("delete... %o", id);
       deleteTeamRequest(id, status => {
-        // console.info("delete status %o", status);
+        console.info("delete callback %o", status);
         if (status.success) {
-          // window.location.reload();
+          //window.location.reload();
           loadTeams();
         }
       });
@@ -222,3 +247,16 @@ function initEvents() {
 
 loadTeams();
 initEvents();
+
+function sleep(ms) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.info("done");
+      resolve();
+    }, ms);
+  });
+}
+
+sleep(2000).then(() => {
+  console.warn("ready");
+});
