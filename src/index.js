@@ -55,9 +55,17 @@ function renderTeams(teams, editId) {
     console.warn("same teams already rendered");
     return;
   }
+  if (!editId && teams.length === previewTeams.lenght) {
+    const sameContent = previewTeams.every((team, i) => team === teams[i]);
+    if (sameContent) {
+      console.info("sameContent");
+      return;
+    }
+  }
+  console.time("render");
   previewTeams = teams;
   const htmlTeams = teams.map(team => {
-    return team.id === editId ? getTeamAsHTML(team) : getTeamAsHTML(team);
+    return team.id === editId ? getTeamAsHTMLInputs(team) : getTeamAsHTML(team);
   });
   // console.warn(htmlTeams);
   $("#teamsTable tbody").innerHTML = htmlTeams.join("");
@@ -98,6 +106,8 @@ function getTeamValues(parent) {
 function onSubmit(e) {
   e.preventDefault();
 
+  console.warn("update or create?", editId);
+
   const team = getTeamValues(editId ? "tbody" : "tfoot");
 
   if (editId) {
@@ -106,9 +116,14 @@ function onSubmit(e) {
     updateTeamRequest(team).then(status => {
       console.warn("updated", status);
       if (status.success) {
-        // window.location.relaod();
-        loadTeams();
-        // $("#teamsForm").reset();
+        allTeams = allTeams.map(t => {
+          console.info(t.id === team.id, t.promotion);
+          if (t.id === team.id) {
+            return team;
+          }
+          return t;
+        });
+        renderTeams(allTeams);
         setInputsDisabled(false);
         editId = "";
       }
@@ -117,10 +132,7 @@ function onSubmit(e) {
     createTeamRequest(team).then(status => {
       console.warn("created", status);
       if (status.success) {
-        // window.location.reload();
-        // loadTeams();
         team.id = status.id;
-        // allTeams.push(team);
         allTeams = [...allTeams, team];
         renderTeams(allTeams);
         $("teamsForm").reset();
