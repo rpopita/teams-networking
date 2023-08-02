@@ -57,11 +57,12 @@ function renderTeams(teams, editId) {
   }
   previewTeams = teams;
   const htmlTeams = teams.map(team => {
-    return team.id === editId ? getTeamAsHTMLInputs(team) : getTeamAsHTML(team);
+    return team.id === editId ? getTeamAsHTML(team) : getTeamAsHTML(team);
   });
   // console.warn(htmlTeams);
   $("#teamsTable tbody").innerHTML = htmlTeams.join("");
   addTitlesToOverflowCells();
+  console.timeEnd("render");
 }
 
 function addTitlesToOverflowCells() {
@@ -151,7 +152,7 @@ function setInputsDisabled(disabled) {
 function filterElements(teams, search) {
   search = search.toLowerCase();
   return teams.filter(team => {
-    // console.info("search %o in %o", search, team.promotion);
+    console.info("search %o in %o", search, team.promotion);
     return (
       team.promotion.toLowerCase().includes(search) ||
       team.members.toLowerCase().includes(search) ||
